@@ -1,0 +1,35 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "com.rez.melee.slippi"
+    },
+    "jhipsterVersion": "6.1.2",
+    "applicationType": "microservice",
+    "baseName": "uploadservice",
+    "packageName": "com.rez.melee.slippi",
+    "packageFolder": "com/rez/melee/slippi",
+    "serverPort": "8081",
+    "authenticationType": "jwt",
+    "cacheProvider": "hazelcast",
+    "enableHibernateCache": false,
+    "websocket": false,
+    "databaseType": "mongodb",
+    "devDatabaseType": "mongodb",
+    "prodDatabaseType": "mongodb",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": "eureka",
+    "buildTool": "maven",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "ZTg3ODYwYWMwNDAzMTBkN2E0N2VhNjkzOWZlMjlmNzY1OWM2NGQzNGUzYTA4MWE0NGNkZGNhMjZmOWU1YTdiNWVhOTQ3OGQ4MmRhMzczNjcyYjlkZmYzOWYyMTc5NDgzYjcwODliZDAxM2M1ZGZiNzhkNThjNDVlODAwZGI2MmY=",
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": false,
+    "clientPackageManager": "npm",
+    "skipClient": true,
+    "skipUserManagement": true
+  }
+}
