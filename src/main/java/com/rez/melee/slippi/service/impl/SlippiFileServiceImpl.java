@@ -7,6 +7,7 @@ import com.rez.melee.slippi.service.SlippiFileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.codec.Hex;
@@ -15,7 +16,9 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * Service Implementation for managing {@link SlippiFile}.
@@ -105,6 +108,9 @@ public class SlippiFileServiceImpl implements SlippiFileService {
         if(hash == null) {
             throw new IllegalArgumentException("Hash value not generated for file");
         }
+        Stream<SlippiFile> existing = slippiFileRepository.findByHashValue(hash);
+        if(existing.findAny().isPresent())
+            throw new DuplicateKeyException("Duplicate file");
 
     }
 }
