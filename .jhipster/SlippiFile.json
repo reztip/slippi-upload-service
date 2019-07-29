@@ -1,0 +1,45 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "uploadservice",
+    "relationships": [],
+    "fields": [
+        {
+            "fieldName": "uploadedBy",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "minlength",
+		"maxlength"
+            ],
+            "fieldValidateRulesMinlength": "5",
+            "fieldValidateRulesMaxlength": "255"
+        },
+        {
+            "fieldName": "fileName",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "minlength",
+		"maxlength"
+            ],
+            "fieldValidateRulesMinlength": "5",
+            "fieldValidateRulesMaxlength": "255"
+        },
+	{
+        	"fieldName": "hashValue",
+		"fieldType": "String",
+		    "fieldValidateRules": [
+                "required"
+            ]
+
+	}
+    ],
+    "dto": "no",
+    "searchEngine": false,
+    "service": "serviceImpl",
+    "entityTableName": "slippi_file",
+    "databaseType": "mongodb",
+    "jpaMetamodelFiltering": false,
+    "pagination": "pagination",
+    "microserviceName": "uploadservice"
+}
