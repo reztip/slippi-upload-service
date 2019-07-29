@@ -5,6 +5,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Nonnull;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
@@ -33,6 +34,14 @@ public class SlippiFile implements Serializable {
     @NotNull
     @Field("hash_value")
     private String hashValue;
+
+    public SlippiFile(@Nonnull MultipartFile file) {
+        this.file = file;
+        this.setFileName(file.getName());
+    }
+
+    public SlippiFile() {
+    }
 
     public MultipartFile getFile() {
         return file;
@@ -108,7 +117,7 @@ public class SlippiFile implements Serializable {
 
     @Override
     public int hashCode() {
-        return 31;
+        return getHashValue().hashCode();
     }
 
     @Override

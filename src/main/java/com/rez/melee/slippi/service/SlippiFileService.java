@@ -5,6 +5,7 @@ import com.rez.melee.slippi.domain.SlippiFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -18,7 +19,7 @@ public interface SlippiFileService {
      * @param slippiFile the entity to save.
      * @return the persisted entity.
      */
-    SlippiFile save(SlippiFile slippiFile);
+    SlippiFile save(SlippiFile slippiFile) throws IOException;
 
     /**
      * Get all the slippiFiles.
@@ -43,4 +44,15 @@ public interface SlippiFileService {
      * @param id the id of the entity.
      */
     void delete(String id);
+
+    /**
+     * Populates the hashValue of the slippiFile, if not set.
+     * @param slippiFile
+     */
+    void populateHashValue(SlippiFile slippiFile) throws IOException;
+
+    /**
+     * Throws an exception if the id / hash is not unique.
+     */
+    void validateUniqueHash(SlippiFile slippiFile);
 }

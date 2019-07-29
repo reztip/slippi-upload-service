@@ -10,6 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 /**
@@ -33,9 +36,25 @@ public class SlippiFileServiceImpl implements SlippiFileService {
      * @return the persisted entity.
      */
     @Override
-    public SlippiFile save(SlippiFile slippiFile) {
+    public SlippiFile save(SlippiFile slippiFile) throws IOException {
         log.debug("Request to save SlippiFile : {}", slippiFile);
+        populateHashValue(slippiFile);
+        validateUniqueHash(slippiFile);
         return slippiFileRepository.save(slippiFile);
+    }
+
+    public void populateHashValue(SlippiFile slippiFile) throws IOException {
+        if(slippiFile.getHashValue() == null){
+            MessageDigest dg = null;
+            try {
+                dg = MessageDigest.getInstance("SHA-256");
+            } catch (NoSuchAlgorithmException e) {
+                throw new IllegalArgumentException("Could not determine file identifier.");
+            }
+
+            byte[] digest = dg.digest(slippiFile.getFile().getBytes());
+            slippiFile.setHashValue(digest.toString());
+        }
     }
 
     /**
@@ -72,5 +91,10 @@ public class SlippiFileServiceImpl implements SlippiFileService {
     public void delete(String id) {
         log.debug("Request to delete SlippiFile : {}", id);
         slippiFileRepository.deleteById(id);
+    }
+
+    //TODO
+    public void validateUniqueHash(SlippiFile slippiFile){
+
     }
 }

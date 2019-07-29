@@ -15,11 +15,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -49,15 +51,16 @@ public class SlippiFileResource {
     /**
      * {@code POST  /slippi-files} : Create a new slippiFile.
      *
-     * @param slippiFile the slippiFile to create.
+     * @param uploadFile the slippiFile to create.
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new slippiFile, or with status {@code 400 (Bad Request)} if the slippiFile has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/slippi-files")
-    public ResponseEntity<SlippiFile> createSlippiFile(@Valid @RequestBody SlippiFile slippiFile) throws URISyntaxException {
-        log.debug("REST request to save SlippiFile : {}", slippiFile);
-        if (slippiFile.getId() != null) {
-            throw new BadRequestAlertException("A new slippiFile cannot already have an ID", ENTITY_NAME, "idexists");
+    public ResponseEntity<SlippiFile> createSlippiFile(@Valid @RequestParam("slippiFile") MultipartFile uploadFile) throws URISyntaxException, IOException {
+        log.debug("REST request to save SlippiFile : {}", uploadFile.getName());
+        SlippiFile slippiFile = new SlippiFile(uploadFile);
+        if (slippiFile.getFileName() != null) {
+            throw new BadRequestAlertException("A new slippiFile cannot be nameless", ENTITY_NAME, "asdf");
         }
         SlippiFile result = slippiFileService.save(slippiFile);
         return ResponseEntity.created(new URI("/api/slippi-files/" + result.getId()))
@@ -65,26 +68,6 @@ public class SlippiFileResource {
             .body(result);
     }
 
-    /**
-     * {@code PUT  /slippi-files} : Updates an existing slippiFile.
-     *
-     * @param slippiFile the slippiFile to update.
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated slippiFile,
-     * or with status {@code 400 (Bad Request)} if the slippiFile is not valid,
-     * or with status {@code 500 (Internal Server Error)} if the slippiFile couldn't be updated.
-     * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
-    @PutMapping("/slippi-files")
-    public ResponseEntity<SlippiFile> updateSlippiFile(@Valid @RequestBody SlippiFile slippiFile) throws URISyntaxException {
-        log.debug("REST request to update SlippiFile : {}", slippiFile);
-        if (slippiFile.getId() == null) {
-            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
-        }
-        SlippiFile result = slippiFileService.save(slippiFile);
-        return ResponseEntity.ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, slippiFile.getId().toString()))
-            .body(result);
-    }
 
     /**
      * {@code GET  /slippi-files} : get all the slippiFiles.
