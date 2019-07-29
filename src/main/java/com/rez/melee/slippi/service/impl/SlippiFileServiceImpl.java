@@ -1,13 +1,15 @@
 package com.rez.melee.slippi.service.impl;
 
-import com.rez.melee.slippi.service.SlippiFileService;
 import com.rez.melee.slippi.domain.SlippiFile;
 import com.rez.melee.slippi.repository.SlippiFileRepository;
+import com.rez.melee.slippi.service.S3UploadService;
+import com.rez.melee.slippi.service.SlippiFileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -25,6 +27,9 @@ public class SlippiFileServiceImpl implements SlippiFileService {
 
     private final SlippiFileRepository slippiFileRepository;
 
+    @Autowired
+    private S3UploadService s3UploadService;
+
     public SlippiFileServiceImpl(SlippiFileRepository slippiFileRepository) {
         this.slippiFileRepository = slippiFileRepository;
     }
@@ -40,6 +45,7 @@ public class SlippiFileServiceImpl implements SlippiFileService {
         log.debug("Request to save SlippiFile : {}", slippiFile);
         populateHashValue(slippiFile);
         validateUniqueHash(slippiFile);
+        s3UploadService.save(slippiFile);
         return slippiFileRepository.save(slippiFile);
     }
 
@@ -52,8 +58,8 @@ public class SlippiFileServiceImpl implements SlippiFileService {
                 throw new IllegalArgumentException("Could not determine file identifier.");
             }
 
-            byte[] digest = dg.digest(slippiFile.getFile().getBytes());
-            slippiFile.setHashValue(digest.toString());
+            byte[] digest = dg.digest(slippiFile.fileBytes());
+            slippiFile.setHashValue(new String(Hex.encode(digest)));
         }
     }
 
@@ -95,6 +101,10 @@ public class SlippiFileServiceImpl implements SlippiFileService {
 
     //TODO
     public void validateUniqueHash(SlippiFile slippiFile){
+        String hash = slippiFile.getHashValue();
+        if(hash == null) {
+            throw new IllegalArgumentException("Hash value not generated for file");
+        }
 
     }
 }

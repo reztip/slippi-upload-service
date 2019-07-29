@@ -1,4 +1,5 @@
 package com.rez.melee.slippi.domain;
+import org.springframework.cloud.cloudfoundry.com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -8,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Nonnull;
 import javax.validation.constraints.*;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 /**
@@ -37,13 +39,13 @@ public class SlippiFile implements Serializable {
 
     public SlippiFile(@Nonnull MultipartFile file) {
         this.file = file;
-        this.setFileName(file.getName());
+        this.setFileName(file.getOriginalFilename());
     }
 
     public SlippiFile() {
     }
 
-    public MultipartFile getFile() {
+    MultipartFile getFile() {
         return file;
     }
 
@@ -52,6 +54,7 @@ public class SlippiFile implements Serializable {
     }
 
     @Transient
+    @JsonDeserialize
     private MultipartFile file;
 
 
@@ -128,5 +131,10 @@ public class SlippiFile implements Serializable {
             ", fileName='" + getFileName() + "'" +
             ", hashValue='" + getHashValue() + "'" +
             "}";
+    }
+
+    public byte[] fileBytes() throws IOException {
+        if(file == null) return null;
+        return file.getBytes();
     }
 }

@@ -59,9 +59,10 @@ public class SlippiFileResource {
     public ResponseEntity<SlippiFile> createSlippiFile(@Valid @RequestParam("slippiFile") MultipartFile uploadFile) throws URISyntaxException, IOException {
         log.debug("REST request to save SlippiFile : {}", uploadFile.getName());
         SlippiFile slippiFile = new SlippiFile(uploadFile);
-        if (slippiFile.getFileName() != null) {
+        if (slippiFile.getFileName() == null) {
             throw new BadRequestAlertException("A new slippiFile cannot be nameless", ENTITY_NAME, "asdf");
         }
+        slippiFile.setUploadedBy("slippiAdmin");
         SlippiFile result = slippiFileService.save(slippiFile);
         return ResponseEntity.created(new URI("/api/slippi-files/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
